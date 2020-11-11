@@ -136,30 +136,23 @@ class PostController extends Controller
             $post->save();
 
             $lastid=$post->id;
-
-            
+             $images=array();
         if ($request->hasfile('files')) {
-            $files = $request->file('files');           
-            foreach($files as $file) {                
+            $files = $request->file('files');
+            
+            foreach($files as $file) {
+                $image=new Image;
                 $name =time().'.'.$file->getClientOriginalName();
                 $path =public_path('/storage/uploads/');
-                $file->move($path, $name);                
-                $images=Image::all();
-                if (isset($images->name)) {
-                    foreach ($images as $image) {
-                        $oldname=$image->name;
-                    File::delete($path.''.$oldname);
-                    }
-                    
-                    $images->name=$name;
-                    $images->post_id=$lastid;  
-                    $images->save();
-                }
-                
-
-            }           
+                $file->move($path, $name);
+                $image->post_id=$lastid;
+                $image->name=$name;
+                $image->save();                
+            }
          }
             return redirect('/posts')->with('success', 'Records inserted successfully!');
+            
+        
     }
 
     /**
